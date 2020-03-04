@@ -202,7 +202,6 @@ function webViewerLoad() {
     if (typeof PDFJSDev !== "undefined" && PDFJSDev.test("CHROME")) {
       pdfjsWebAppOptions.AppOptions.set("defaultUrl", defaultUrl);
     }
-
     window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
     window.PDFViewerApplicationOptions = pdfjsWebAppOptions.AppOptions;
 
@@ -214,8 +213,6 @@ function webViewerLoad() {
       event.initCustomEvent("webviewerloaded", true, true, {});
       document.dispatchEvent(event);
     }
-
-    pdfjsWebApp.PDFViewerApplication.run(config);
   }
 }
 
