@@ -50,8 +50,8 @@ var EXTENSION_SRC_DIR = "extensions/";
 
 var BASELINE_DIR = BUILD_DIR + "baseline/";
 var MOZCENTRAL_BASELINE_DIR = BUILD_DIR + "mozcentral.baseline/";
-var GENERIC_DIR = BUILD_DIR + "generic/";
-var GENERIC_ES5_DIR = BUILD_DIR + "generic-es5/";
+var GENERIC_DIR = BUILD_DIR + "allbuild/generic/";
+var GENERIC_ES5_DIR = BUILD_DIR + "allbuild/generic-es5/";
 var COMPONENTS_DIR = BUILD_DIR + "components/";
 var COMPONENTS_ES5_DIR = BUILD_DIR + "components-es5/";
 var IMAGE_DECODERS_DIR = BUILD_DIR + "image_decoders";
