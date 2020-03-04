@@ -177,7 +177,7 @@ const PDFViewerApplication = {
   l10n: null,
   isInitialViewSet: false,
   downloadComplete: false,
-  isViewerEmbedded: window.parent !== window,
+  isViewerEmbedded: true,
   url: "",
   baseUrl: "",
   externalServices: DefaultExternalServices,
@@ -209,7 +209,7 @@ const PDFViewerApplication = {
     this.bindWindowEvents();
 
     // We can start UI localization now.
-    const appContainer = appConfig.appContainer || document.documentElement;
+    const appContainer = appConfig.appContainer;
     this.l10n.translate(appContainer).then(() => {
       // Dispatch the 'localized' event on the `eventBus` once the viewer
       // has been fully initialized and translated.
@@ -330,7 +330,7 @@ const PDFViewerApplication = {
       locale: AppOptions.get("locale"),
     });
     const dir = await this.l10n.getDirection();
-    document.getElementsByTagName("html")[0].dir = dir;
+    this.appConfig.component.dir = dir;
   },
 
   /**
@@ -778,6 +778,7 @@ const PDFViewerApplication = {
         this.load(pdfDocument);
       },
       exception => {
+        this.eventBus.dispatch("documenterror", { error: exception });
         if (loadingTask !== this.pdfLoadingTask) {
           return undefined; // Ignore errors for previously opened PDF files.
         }
@@ -1016,14 +1017,16 @@ const PDFViewerApplication = {
   load(pdfDocument) {
     this.pdfDocument = pdfDocument;
 
-    pdfDocument.getDownloadInfo().then(() => {
-      this.downloadComplete = true;
-      this.loadingBar.hide();
+    pdfDocument
+      .getDownloadInfo()
+      .then(() => {
+        this.downloadComplete = true;
+        this.loadingBar.hide();
 
-      firstPagePromise.then(() => {
-        this.eventBus.dispatch("documentloaded", { source: this });
+        firstPagePromise.then(() => {
+          this.eventBus.dispatch("documentloaded", { source: this });
+        });
       });
-    });
 
     // Since the `setInitialView` call below depends on this being resolved,
     // fetch it early to avoid delaying initial rendering of the PDF document.
@@ -1662,7 +1665,7 @@ const PDFViewerApplication = {
     window.addEventListener("visibilitychange", webViewerVisibilityChange);
     window.addEventListener("wheel", webViewerWheel, { passive: false });
     window.addEventListener("click", webViewerClick);
-    window.addEventListener("keydown", webViewerKeyDown);
+    this.appConfig.viewerContainer.addEventListener("keydown", webViewerKeyDown);
     window.addEventListener("resize", _boundEvents.windowResize);
     window.addEventListener("hashchange", _boundEvents.windowHashChange);
     window.addEventListener("beforeprint", _boundEvents.windowBeforePrint);
@@ -1817,7 +1820,7 @@ function webViewerInitialized() {
     fileInput.className = "fileInput";
     fileInput.setAttribute("type", "file");
     fileInput.oncontextmenu = noContextMenuHandler;
-    document.body.appendChild(fileInput);
+    appConfig.appContainer.appendChild(fileInput);
 
     if (
       !window.File ||
@@ -2195,7 +2198,8 @@ function webViewerPresentationMode() {
 function webViewerOpenFile() {
   if (typeof PDFJSDev === "undefined" || PDFJSDev.test("GENERIC")) {
     const openFileInputName = PDFViewerApplication.appConfig.openFileInputName;
-    document.getElementById(openFileInputName).click();
+    const container = PDFViewerApplication.appConfig.appContainer;
+    container.getElementById(openFileInputName).click();
   }
 }
 function webViewerPrint() {

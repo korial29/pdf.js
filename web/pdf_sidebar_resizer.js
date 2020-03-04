@@ -37,7 +37,7 @@ class PDFSidebarResizer {
     this.enabled = false;
     this.isRTL = false;
     this.sidebarOpen = false;
-    this.doc = document.documentElement;
+    this.doc = window.PDFViewerConfig.appContainer;
     this._width = null;
     this._outerContainerWidth = null;
     this._boundEvents = Object.create(null);

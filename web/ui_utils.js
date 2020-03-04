@@ -892,8 +892,10 @@ class ProgressBar {
   constructor(id, { height, width, units } = {}) {
     this.visible = true;
 
+    this.viewerContainer = window.PDFViewerConfig.appContainer;
+
     // Fetch the sub-elements for later.
-    this.div = document.querySelector(id + " .progress");
+    this.div = this.viewerContainer.querySelector(id + " .progress");
     // Get the loading bar element, so it can be resized to fit the viewer.
     this.bar = this.div.parentNode;
 
@@ -946,7 +948,7 @@ class ProgressBar {
     }
     this.visible = false;
     this.bar.classList.add("hidden");
-    document.body.classList.remove("loadingInProgress");
+    this.viewerContainer.classList.remove("loadingInProgress");
   }
 
   show() {
@@ -954,7 +956,7 @@ class ProgressBar {
       return;
     }
     this.visible = true;
-    document.body.classList.add("loadingInProgress");
+    this.viewerContainer.classList.add("loadingInProgress");
     this.bar.classList.remove("hidden");
   }
 }
